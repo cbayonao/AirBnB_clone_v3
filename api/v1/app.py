@@ -2,7 +2,7 @@
 """
 Status of your API
 """
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 from os import getenv
@@ -20,6 +20,14 @@ def handler_close(self):
     storage.close()
 
 
+@app.errorhandler(404)
+def not_found(e):
+    """
+    Handles 404 errors
+    """
+    return jsonify(error="Not found"), 404
+
+
 if __name__ == '__main__':
     host = getenv('HBNB_API_HOST')
     if not host:
@@ -27,4 +35,4 @@ if __name__ == '__main__':
     port = getenv('HBNB_API_PORT')
     if not port:
         port = 5000
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=host, port=port, threaded=True, debug=True)
