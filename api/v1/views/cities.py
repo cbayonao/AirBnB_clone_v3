@@ -83,10 +83,10 @@ def update_city_by_id(city_id):
         abort(400, "Not a JSON")
 
     for key, value in request.get_json().items():
-        if key != 'id'
+        if (key != 'id'
         and key != 'state_id'
         and key != 'created_at'
-        and key != 'updated_at':
+        and key != 'updated_at'):
             setattr(city, key, value)
     storage.save()
     return jsonify(city.to_dict()), 200
