@@ -27,7 +27,7 @@ def get_amenity_by_id(amenity_id):
     """
     Retrieves a Amenity object: GET /api/v1/amenities/<amenity_id>
     """
-    amenity = storage.get("Amenity", amenity_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
     else:
@@ -36,16 +36,16 @@ def get_amenity_by_id(amenity_id):
 
 @app_views.route('amenities/<amenity_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_amenity_by_id(amenty_id):
+def delete_amenity_by_id(amenity_id):
     """
     Deletes a Amenity object
     """
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
         abort(404)
-    state.delete()
+    amenity.delete()
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
 
 
 @app_views.route('/amenities', methods=['POST'],
@@ -61,7 +61,7 @@ def create_amenity():
     amenity = Amenity(**request.get_json())
     storage.new(amenity)
     storage.save()
-    return jsonify(state.to_dict()), 201
+    return jsonify(amenity.to_dict()), 201
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'],
