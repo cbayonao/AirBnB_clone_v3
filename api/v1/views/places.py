@@ -32,11 +32,10 @@ def get_place_by_id(place_id):
     """
     Retrieves a Place object: GET /api/v1/places/<place_id>
     """
-    place = storage.get(Place, place_id)
+    place = storage.get("Place", place_id)
     if not place:
         abort(404)
-    else:
-        return jsonify(place.to_dict())
+    return jsonify(place.to_dict())
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
@@ -62,16 +61,16 @@ def create_place(city_id):
     city = storage.get(City, city_id)
     if not city:
         abort(404)
-    if not request.json():
+    if not request.get_json():
         abort(400, "Not a JSON")
-    if 'user_id' not in request.json():
+    if 'user_id' not in request.get_json():
         return jsonify('Missing user_id'), 400
-    user = storage.get("User", content["user_id"])
+    user = storage.get("User", request.get_json()["user_id"])
     if not user:
         abort(404)
-    if "name" not in request.json():
+    if "name" not in request.get_json():
         return jsonify("Missing name"), 400
-    place = Place(**request.json())
+    place = Place(**request.get_json())
     setattr(place, 'city_id', city_id)
     storage.new(place)
     storage.save()
