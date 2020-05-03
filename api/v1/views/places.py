@@ -17,12 +17,13 @@ def get_places_for_city(city_id):
     retrieve an object into a valid JSON
     """
     my_list = []
-    all_cities = storage.all(City)
-    for city in all_cities:
-        if all_cities[city].id == city_id:
-            for obj in all_cities:
-                my_list.append(all_places[obj].to_dict())
-            return jsonify(my_list)
+    cit = storage.all(City)
+    for c in cit:
+        if cit[c].id == city_id:
+            var = cit[c].places
+            for i in var:
+                my_list.append(i.to_dict())
+            return (jsonify(my_list))
     abort(404)
 
 
