@@ -59,22 +59,21 @@ def create_place(city_id):
     """
     Creates a Place accord the city
     """
-    my_list = []
     city = storage.get(City, city_id)
     if not city:
         abort(404)
-    if not request.json:
-        return jsonify('Not a JSON'), 400
-    if 'user_id' not in request.json:
+    if not request.json():
+        abort(400, "Not a JSON")
+    if 'user_id' not in request.json():
         return jsonify('Missing user_id'), 400
     user = storage.get("User", content["user_id"])
     if not user:
         abort(404)
-    if "name" not in request.json:
+    if "name" not in request.json():
         return jsonify("Missing name"), 400
-    new_content = request.get_json()
-    new_content["city_id"] = city_id
-    place = Place(**new_content)
+    place = Place(**request.json())
+    setattr(place, 'city_id', city_id)
+    storage.new(place)
     storage.save()
     return jsonify(place.to_dict()), 201
 
@@ -91,7 +90,8 @@ def update_place_by_id(place_id):
     if not request.get_json():
         abort(400, "Not a JSON")
     for key, value in request.get_json().items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
+        if key not in ['id', 'user_id', 'city_at',
+                       'created_at', 'updated_at']:
             setattr(place, key, value)
     storage.save()
     return jsonify(place.to_dict()), 200
